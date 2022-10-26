@@ -50,7 +50,12 @@ func TestRespondsWithLove(t *testing.T) {
 		return nil
 	})
 	require.NoError(t, err, "HTTP error")
-	defer resp.Body.Close()
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			t.Log("failed to close HTTP body")
+		}
+	}(resp.Body)
 
 	require.Equal(t, http.StatusOK, resp.StatusCode, "HTTP status code")
 
@@ -86,7 +91,12 @@ func TestHealthCheck(t *testing.T) {
 		return nil
 	})
 	require.NoError(t, err, "HTTP error")
-	defer resp.Body.Close()
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			t.Log("failed to close HTTP body")
+		}
+	}(resp.Body)
 
 	require.Equal(t, http.StatusOK, resp.StatusCode, "HTTP status code")
 
